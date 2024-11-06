@@ -1,4 +1,4 @@
-package com.spaceships.spaceships;
+package com.portizdev.spaceships;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
