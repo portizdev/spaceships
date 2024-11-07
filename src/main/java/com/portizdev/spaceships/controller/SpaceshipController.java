@@ -5,6 +5,8 @@ import com.portizdev.spaceships.service.SpaceshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,11 +26,15 @@ public class SpaceshipController {
     @Autowired
     private SpaceshipService service;
 
-    @GetMapping
-    public Page<Spaceship> getAllSpaceships(Pageable pageable) {
-        return service.getAllSpaceships(pageable);
-    }
+    @Autowired
+    private PagedResourcesAssembler<Spaceship> pagedResourcesAssembler;
 
+    @GetMapping
+    public PagedModel<?> getAllSpaceships(Pageable pageable) {
+        Page<Spaceship> page = service.getAllSpaceships(pageable);
+        return pagedResourcesAssembler.toModel(page);
+    }
+    
     @GetMapping("/{id}")
     public Spaceship getSpaceshipById(@PathVariable Long id) {
         return service.getSpaceshipById(id);

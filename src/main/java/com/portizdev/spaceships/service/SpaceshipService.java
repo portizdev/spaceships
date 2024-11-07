@@ -1,5 +1,6 @@
 package com.portizdev.spaceships.service;
 
+import com.portizdev.spaceships.kafka.SpaceshipProducer;
 import com.portizdev.spaceships.model.Spaceship;
 import com.portizdev.spaceships.repository.SpaceshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class SpaceshipService {
     @Autowired
     private SpaceshipRepository repository;
 
+    @Autowired
+    private SpaceshipProducer producer;
+
     @Cacheable("spaceships")
     public Page<Spaceship> getAllSpaceships(Pageable pageable) {
         return repository.findAll(pageable);
@@ -31,15 +35,20 @@ public class SpaceshipService {
     }
 
     public Spaceship createSpaceship(Spaceship spaceship) {
-        return repository.save(spaceship);
+        Spaceship savedSpaceship = repository.save(spaceship);
+        producer.sendSpaceshipEvent(savedSpaceship, "CREATED"); // Evento de creación
+        return savedSpaceship;
     }
 
     public Spaceship updateSpaceship(Long id, Spaceship spaceship) {
         spaceship.setId(id);
-        return repository.save(spaceship);
+        Spaceship updatedSpaceship = repository.save(spaceship);
+        producer.sendSpaceshipEvent(updatedSpaceship, "UPDATED"); // Evento de actualización
+        return updatedSpaceship;
     }
 
     public void deleteSpaceship(Long id) {
         repository.deleteById(id);
+        producer.sendSpaceshipEvent(new Spaceship(id, "N/A", "N/A", 0), "DELETED"); // Evento de eliminación
     }
 }
