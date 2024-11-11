@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 
 @Entity
 public class Spaceship {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,11 +18,15 @@ public class Spaceship {
 
     private String type;
     private int capacity;
-    
-    public Spaceship(Long id2, String string, String string2, int i) {
-        //TODO Auto-generated constructor stub
-    }
 
+    
+    public Spaceship(Long id, String name, String type, int capacity) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.capacity = capacity;
+    }
+    
     public void setId(Long id) {this.id = id; }
     public Long getId() { return id; }
     
